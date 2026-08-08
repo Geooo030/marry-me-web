@@ -14,6 +14,7 @@ const GUEST_NAMES = [
   "嘻嘻",
   "猪肉佬",
   "QQ",
+  "B伟表弟",
 ];
 
 const noHorizontalOverflow = (page: import("@playwright/test").Page) =>
@@ -23,7 +24,7 @@ const noHorizontalOverflow = (page: import("@playwright/test").Page) =>
       document.documentElement.clientWidth,
   );
 
-test("首页展示全部 13 位嘉宾且无横向滚动", async ({ page }) => {
+test("首页展示全部 14 位嘉宾且无横向滚动", async ({ page }) => {
   await page.goto("/");
   await expect(
     page.getByRole("heading", { name: /班主任小王吧/ }),
@@ -78,6 +79,17 @@ test("桌面窄视口渲染正常", async ({ page }) => {
   ).toBeVisible();
   expect(await noHorizontalOverflow(page)).toBeLessThanOrEqual(0);
   await page.screenshot({ path: "screenshots/home-desktop-narrow.png", fullPage: true });
+});
+
+test("地点详情弹窗展示手绘地图与地址操作", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: /查看地点详情/ }).click();
+  await expect(page.locator(".venue-sheet")).toBeVisible();
+  await expect(page.locator(".venue-map-img")).toBeVisible();
+  await expect(page.getByText("广东省东莞市东福商业街水印长堤2栋")).toBeVisible();
+  await expect(page.getByRole("button", { name: /高德地图/ })).toBeVisible();
+  await expect(page.getByRole("button", { name: /系统地图/ })).toBeVisible();
+  expect(await noHorizontalOverflow(page)).toBeLessThanOrEqual(0);
 });
 
 test("减少动态效果时页面仍可正常使用", async ({ page }) => {

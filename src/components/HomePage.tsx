@@ -1,10 +1,18 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CalendarDays, Coffee, Heart, MapPin, Sparkles } from "lucide-react";
+import {
+  CalendarDays,
+  ChevronDown,
+  ChevronRight,
+  Heart,
+  MapPin,
+  Sparkles,
+} from "lucide-react";
 import { guests } from "../data/guests";
 import { eventMeta } from "../data/timeline";
 import Confetti from "./Confetti";
 import Countdown from "./Countdown";
+import VenueModal from "./VenueModal";
 
 const STORAGE_KEY = "marry-me-guest-id";
 
@@ -19,6 +27,7 @@ const GROUP_CLASS: Record<string, string> = {
 export default function HomePage() {
   const navigate = useNavigate();
   const [bursting, setBursting] = useState(false);
+  const [venueOpen, setVenueOpen] = useState(false);
 
   useEffect(() => {
     const saved = window.localStorage.getItem(STORAGE_KEY);
@@ -47,20 +56,33 @@ export default function HomePage() {
         </h1>
         <p className="hero-sub">8 月 15 日，一场烧烤约会的秘密惊喜</p>
         <div className="hero-meta">
-          <span className="meta-pill">
+          <button
+            type="button"
+            className="meta-pill meta-pill--venue"
+            onClick={() => setVenueOpen(true)}
+          >
             <MapPin size={15} /> {eventMeta.venue}
-          </span>
+            <ChevronDown size={14} />
+          </button>
           <span className="meta-pill">
             <Sparkles size={15} /> 求婚时刻 17:30
           </span>
         </div>
+        <button
+          type="button"
+          className="venue-entry"
+          onClick={() => setVenueOpen(true)}
+        >
+          <MapPin size={15} /> 查看地点详情
+          <ChevronRight size={14} />
+        </button>
         <Countdown />
       </section>
 
       <section className="section">
         <div className="section-head">
           <h2 className="section-title">今天你是哪一位？</h2>
-          <span className="section-sticker">13 人任务书</span>
+          <span className="section-sticker">14 人任务书</span>
         </div>
         <div className="guest-grid">
           {guests.map((guest, index) => (
@@ -75,10 +97,10 @@ export default function HomePage() {
             </button>
           ))}
         </div>
-        <p className="absent-note">
-          <Coffee size={14} /> 日：安心上班中，不来啦
-        </p>
-      </section>
+              </section>
+      <VenueModal open={venueOpen} onClose={() => setVenueOpen(false)} />
     </div>
   );
 }
+
+
