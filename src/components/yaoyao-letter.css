@@ -1,0 +1,42 @@
+.letter-sheet--password .pass-field {
+  max-width: 340px;
+  padding: 10px;
+}
+
+.letter-sheet--password .pass-digits {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  gap: 8px;
+}
+
+.letter-sheet--password .pass-field .pass-input {
+  flex: 1;
+  min-width: 0;
+  width: 44px;
+  height: 52px;
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  background: var(--paper);
+  outline: none;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 900;
+  -webkit-text-security: none;
+  caret-color: var(--pink);
+}
+
+.letter-sheet--password .pass-field .pass-input:focus {
+  border-color: var(--pink);
+  box-shadow: 0 0 0 3px var(--pink-soft);
+}
+
+@media (max-width: 360px) {
+  .letter-sheet--password .pass-digits {
+    gap: 6px;
+  }
+  .letter-sheet--password .pass-field .pass-input {
+    height: 48px;
+    font-size: 22px;
+  }
+}

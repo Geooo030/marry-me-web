@@ -1,10 +1,15 @@
-import { useEffect, useRef, useState } from "react";
-import { Heart, Lock, Mail, X } from "lucide-react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type KeyboardEvent as ReactKeyboardEvent,
+} from "react";
+import { Heart, Lock, Mail, Smartphone, X } from "lucide-react";
 import Confetti from "./Confetti";
+import "./yaoyao-letter.css";
 
 const STORAGE_KEY = "yaoyao-letter-unlocked";
-const PASS_PREFIX = "520";
-const PASS_CODE = "1314";
+const PASS_DIGITS = "120197";
 
 export default function YaoyaoLetter() {
   const [unlocked, setUnlocked] = useState(
@@ -12,10 +17,12 @@ export default function YaoyaoLetter() {
   );
   const [passwordOpen, setPasswordOpen] = useState(false);
   const [letterOpen, setLetterOpen] = useState(false);
-  const [code, setCode] = useState("");
+  const [code, setCode] = useState<string[]>(
+    Array.from({ length: PASS_DIGITS.length }, () => ""),
+  );
   const [error, setError] = useState("");
   const [celebrating, setCelebrating] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
     if (!passwordOpen && !letterOpen) return;
@@ -29,7 +36,7 @@ export default function YaoyaoLetter() {
     document.body.style.overflow = "hidden";
     document.addEventListener("keydown", handleKey);
     const focusTimer = passwordOpen
-      ? window.setTimeout(() => inputRef.current?.focus(), 120)
+      ? window.setTimeout(() => inputRefs.current[0]?.focus(), 120)
       : undefined;
     return () => {
       if (focusTimer) window.clearTimeout(focusTimer);
@@ -43,20 +50,77 @@ export default function YaoyaoLetter() {
       setLetterOpen(true);
       return;
     }
-    setCode("");
+    setCode(Array.from({ length: PASS_DIGITS.length }, () => ""));
     setError("");
     setPasswordOpen(true);
   };
 
-  const handleCodeChange = (value: string) => {
-    const digits = value.replace(/\D/g, "").slice(0, 4);
-    setCode(digits);
+  const handleDigitChange = (index: number, value: string) => {
+    const digits = value
+      .replace(/\D/g, "")
+      .split("")
+      .slice(0, PASS_DIGITS.length - index);
+    if (digits.length === 0) {
+      if (error) setError("");
+      return;
+    }
+    setCode((prev) => {
+      const next = [...prev];
+      digits.forEach((digit, offset) => {
+        next[index + offset] = digit;
+      });
+      return next;
+    });
     if (error) setError("");
+    inputRefs.current[
+      Math.min(index + digits.length, PASS_DIGITS.length - 1)
+    ]?.focus();
+  };
+
+  const handleDigitKeyDown = (
+    index: number,
+    event: ReactKeyboardEvent<HTMLInputElement>,
+  ) => {
+    if (event.key === "Backspace") {
+      event.preventDefault();
+      if (code[index]) {
+        setCode((prev) => {
+          const next = [...prev];
+          next[index] = "";
+          return next;
+        });
+      } else if (index > 0) {
+        setCode((prev) => {
+          const next = [...prev];
+          next[index - 1] = "";
+          return next;
+        });
+        inputRefs.current[index - 1]?.focus();
+      }
+      return;
+    }
+
+    if (event.key === "ArrowLeft" && index > 0) {
+      event.preventDefault();
+      inputRefs.current[index - 1]?.focus();
+      return;
+    }
+
+    if (event.key === "ArrowRight" && index < PASS_DIGITS.length - 1) {
+      event.preventDefault();
+      inputRefs.current[index + 1]?.focus();
+      return;
+    }
+
+    if (event.key === "Enter" && code.every((digit) => digit !== "")) {
+      event.preventDefault();
+      submit();
+    }
   };
 
   const submit = () => {
-    if (code.length !== 4) return;
-    if (code === PASS_CODE) {
+    if (code.some((digit) => digit === "")) return;
+    if (code.join("") === PASS_DIGITS) {
       window.localStorage.setItem(STORAGE_KEY, "1");
       setUnlocked(true);
       setPasswordOpen(false);
@@ -67,8 +131,8 @@ export default function YaoyaoLetter() {
       }, 650);
     } else {
       setError("暗号不对，再试一次");
-      setCode("");
-      window.setTimeout(() => inputRef.current?.focus(), 60);
+      setCode(Array.from({ length: PASS_DIGITS.length }, () => ""));
+      window.setTimeout(() => inputRefs.current[0]?.focus(), 60);
     }
   };
 
@@ -98,6 +162,19 @@ export default function YaoyaoLetter() {
               <Lock size={20} />
             )}
           </span>
+        </button>
+        <button
+          type="button"
+          className={`letter-entry ${unlocked ? "is-unlocked" : ""}`}
+          onClick={openCard}
+        >
+          <Smartphone size={16} />
+          我的手机密码
+          {unlocked ? (
+            <Heart size={15} fill="currentColor" />
+          ) : (
+            <Lock size={15} />
+          )}
         </button>
       </section>
 
@@ -130,25 +207,30 @@ export default function YaoyaoLetter() {
             <div className="letter-password">
               <p className="letter-password-title">只有你知道的暗号</p>
               <p className="letter-password-sub">
-                前面 520 已经替你放好了，输入后四位
+                输入我的手机密码，就能拆开这封信
               </p>
               <div className={`pass-field ${error ? "is-error" : ""}`}>
-                <span className="pass-prefix">{PASS_PREFIX}</span>
-                <input
-                  ref={inputRef}
-                  className="pass-input"
-                  value={code}
-                  onChange={(event) => handleCodeChange(event.target.value)}
-                  onKeyDown={(event) => {
-                    if (event.key === "Enter") submit();
-                  }}
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  maxLength={4}
-                  autoComplete="one-time-code"
-                  aria-label="暗号后四位"
-                  placeholder="1314"
-                />
+                <div className="pass-digits" role="group" aria-label="暗号六位">
+                  {PASS_DIGITS.split("").map((_, index) => (
+                    <input
+                      key={index}
+                      ref={(element) => {
+                        inputRefs.current[index] = element;
+                      }}
+                      className="pass-input"
+                      value={code[index] ?? ""}
+                      onChange={(event) =>
+                        handleDigitChange(index, event.target.value)
+                      }
+                      onKeyDown={(event) => handleDigitKeyDown(index, event)}
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      maxLength={1}
+                      autoComplete="one-time-code"
+                      aria-label={`暗号第 ${index + 1} 位`}
+                    />
+                  ))}
+                </div>
               </div>
               <p className="letter-error" role="alert">
                 {error}
@@ -157,7 +239,7 @@ export default function YaoyaoLetter() {
                 type="button"
                 className="pass-submit"
                 onClick={submit}
-                disabled={code.length !== 4}
+                disabled={code.some((digit) => digit === "")}
               >
                 <Heart size={16} fill="currentColor" /> 拆开这封信
               </button>

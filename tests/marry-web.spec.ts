@@ -107,22 +107,37 @@ test("首页展示瑶瑶的一封信封口卡片", async ({ page }) => {
   await expect(
     page.getByRole("button", { name: /瑶瑶的一封信/ }),
   ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: /我的手机密码/ }),
+  ).toBeVisible();
   await expect(page.getByText("一封封口的信，输入暗号才能拆开")).toBeVisible();
 });
 
 test("输入错误暗号无法拆信", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: /瑶瑶的一封信/ }).click();
-  await page.getByLabel("暗号后四位").fill("0000");
+  await page.getByRole("button", { name: /我的手机密码/ }).click();
+  await page.getByLabel("暗号第 1 位").fill("0");
+  await page.getByLabel("暗号第 2 位").fill("0");
+  await page.getByLabel("暗号第 3 位").fill("0");
+  await page.getByLabel("暗号第 4 位").fill("0");
+  await page.getByLabel("暗号第 5 位").fill("0");
+  await page.getByLabel("暗号第 6 位").fill("0");
   await page.getByRole("button", { name: /拆开这封信/ }).click();
   await expect(page.getByText("暗号不对，再试一次")).toBeVisible();
   await expect(page.getByText("亲爱的瑶瑶：")).not.toBeVisible();
 });
 
-test("输入 1314 暗号后拆开信件", async ({ page }) => {
+test("输入 120197 暗号后拆开信件", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: /瑶瑶的一封信/ }).click();
-  await page.getByLabel("暗号后四位").fill("1314");
+  await expect(page.getByText("前面 12 已经替你放好了，输入四个数字")).toHaveCount(0);
+  await expect(page.getByText("输入我的手机密码，就能拆开这封信")).toBeVisible();
+  await page.getByLabel("暗号第 1 位").fill("1");
+  await page.getByLabel("暗号第 2 位").fill("2");
+  await page.getByLabel("暗号第 3 位").fill("0");
+  await page.getByLabel("暗号第 4 位").fill("1");
+  await page.getByLabel("暗号第 5 位").fill("9");
+  await page.getByLabel("暗号第 6 位").fill("7");
   await page.getByRole("button", { name: /拆开这封信/ }).click();
   await expect(
     page.getByRole("heading", { name: "瑶瑶的一封信" }),
