@@ -1079,3 +1079,320 @@ button:focus-visible {
   }
 }
 
+.letter-paper {
+  padding: 8px 20px 34px;
+  background: #fffefa;
+}
+
+.letter-title {
+  margin: 6px 0 12px;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 26px;
+}
+
+.letter-greeting {
+  margin: 0 0 12px;
+  font-weight: 800;
+}
+
+.letter-paper p {
+  margin: 0 0 12px;
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+.letter-sign {
+  margin-top: 22px;
+  text-align: right;
+  color: var(--pink);
+  font-family: var(--font-script);
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.letter-confetti {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+}
+
+@media (max-width: 360px) {
+  .letter-card {
+    padding: 14px;
+  }
+}
+
+.letter-password {
+  padding: 4px 18px 32px;
+  text-align: center;
+}
+
+.letter-password-title {
+  margin: 6px 0 0;
+  font-family: var(--font-display);
+  font-size: 22px;
+}
+
+.letter-password-sub {
+  margin: 6px 0 18px;
+  color: #6b7280;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.pass-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 280px;
+  margin: 0 auto;
+  border: 2px solid var(--ink);
+  border-radius: 18px;
+  background: var(--surface);
+  padding: 8px;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+.pass-field.is-error {
+  animation: passShake 0.3s ease;
+}
+
+.pass-prefix {
+  flex-shrink: 0;
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  background: var(--pink-soft);
+  padding: 9px 13px;
+  font-family: var(--font-script);
+  font-size: 21px;
+  font-weight: 700;
+}
+
+.pass-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  text-align: center;
+  font-size: 26px;
+  font-weight: 900;
+  -webkit-text-security: disc;
+  caret-color: var(--pink);
+}
+
+.letter-error {
+  min-height: 18px;
+  margin: 10px 0 0;
+  color: var(--coral);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.pass-submit {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 14px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--pink);
+  color: #ffffff;
+  padding: 12px 22px;
+  box-shadow: 3px 3px 0 var(--ink);
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 800;
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.16s ease,
+    background 0.16s ease,
+    color 0.16s ease;
+}
+
+.pass-submit:disabled {
+  background: #d6cfc7;
+  color: #6b7280;
+  box-shadow: 2px 2px 0 var(--ink);
+  cursor: default;
+}
+
+.pass-submit:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+
+@keyframes passShake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-6px);
+  }
+  50% {
+    transform: translateX(6px);
+  }
+  75% {
+    transform: translateX(-4px);
+  }
+}
+
+.letter-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(45, 45, 45, 0.45);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  animation: venueFadeIn 0.22s ease;
+}
+
+.letter-sheet {
+  width: 100%;
+  max-width: 520px;
+  max-height: 88dvh;
+  overflow-y: auto;
+  border: 3px solid var(--ink);
+  border-bottom: none;
+  border-radius: 26px 26px 0 0;
+  background: var(--paper);
+  box-shadow: 0 -6px 0 rgba(45, 45, 45, 0.12);
+  animation: venueSlideUp 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.letter-sheet-grip {
+  display: block;
+  width: 44px;
+  height: 5px;
+  margin: 10px auto 4px;
+  border-radius: 999px;
+  background: rgba(45, 45, 45, 0.18);
+}
+
+.letter-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 18px 14px;
+}
+
+.letter-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--pink-soft);
+  padding: 6px 12px;
+  box-shadow: 2px 2px 0 var(--ink);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.letter-close {
+  display: inline-flex;
+  width: 38px;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--surface);
+  box-shadow: 2px 2px 0 var(--ink);
+  cursor: pointer;
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.16s ease;
+}
+
+.letter-close:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 var(--ink);
+}
+
+/* ===== 瑶瑶的一封信 ===== */
+.letter-spot {
+  margin-top: 22px;
+  text-align: left;
+}
+
+.letter-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 4px 14px;
+  width: 100%;
+  border: 3px solid var(--ink);
+  border-radius: 20px 24px 18px 22px;
+  background: linear-gradient(135deg, #ffffff 0%, #fff3f7 100%);
+  padding: 16px 16px 16px 18px;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  text-align: left;
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.16s ease;
+}
+
+.letter-card:hover {
+  transform: translateY(-2px);
+}
+
+.letter-card:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+
+.letter-card-stamp {
+  position: absolute;
+  top: -11px;
+  right: 14px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--gold-soft);
+  padding: 4px 10px;
+  box-shadow: 2px 2px 0 var(--ink);
+  transform: rotate(2deg);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.letter-card-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  line-height: 1.25;
+}
+
+.letter-card-hint {
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.letter-card-seal {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  display: inline-flex;
+  width: 48px;
+  height: 48px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--pink);
+  color: #ffffff;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+.letter-card.is-unlocked .letter-card-seal {
+  background: var(--teal);
+}
+
