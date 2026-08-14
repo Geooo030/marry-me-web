@@ -4,19 +4,17 @@ import {
   useState,
   type KeyboardEvent as ReactKeyboardEvent,
 } from "react";
-import { Heart, Lock, Mail, Smartphone, X } from "lucide-react";
+import { Heart, Info, Lock, Mail, X } from "lucide-react";
 import Confetti from "./Confetti";
 import "./yaoyao-letter.css";
 
-const STORAGE_KEY = "yaoyao-letter-unlocked";
 const PASS_DIGITS = "120197";
 
 export default function YaoyaoLetter() {
-  const [unlocked, setUnlocked] = useState(
-    () => window.localStorage.getItem(STORAGE_KEY) === "1",
-  );
+  const [unlocked, setUnlocked] = useState(false);
   const [passwordOpen, setPasswordOpen] = useState(false);
   const [letterOpen, setLetterOpen] = useState(false);
+  const [hintOpen, setHintOpen] = useState(false);
   const [code, setCode] = useState<string[]>(
     Array.from({ length: PASS_DIGITS.length }, () => ""),
   );
@@ -25,11 +23,12 @@ export default function YaoyaoLetter() {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
-    if (!passwordOpen && !letterOpen) return;
+    if (!passwordOpen && !letterOpen && !hintOpen) return;
     const handleKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         if (letterOpen) setLetterOpen(false);
-        else setPasswordOpen(false);
+        else if (passwordOpen) setPasswordOpen(false);
+        else setHintOpen(false);
       }
     };
     const prevOverflow = document.body.style.overflow;
@@ -43,7 +42,7 @@ export default function YaoyaoLetter() {
       document.body.style.overflow = prevOverflow;
       document.removeEventListener("keydown", handleKey);
     };
-  }, [passwordOpen, letterOpen]);
+  }, [passwordOpen, letterOpen, hintOpen]);
 
   const openCard = () => {
     if (unlocked) {
@@ -121,7 +120,6 @@ export default function YaoyaoLetter() {
   const submit = () => {
     if (code.some((digit) => digit === "")) return;
     if (code.join("") === PASS_DIGITS) {
-      window.localStorage.setItem(STORAGE_KEY, "1");
       setUnlocked(true);
       setPasswordOpen(false);
       setCelebrating(true);
@@ -165,16 +163,11 @@ export default function YaoyaoLetter() {
         </button>
         <button
           type="button"
-          className={`letter-entry ${unlocked ? "is-unlocked" : ""}`}
-          onClick={openCard}
+          className="letter-entry"
+          onClick={() => setHintOpen(true)}
         >
-          <Smartphone size={16} />
-          我的手机密码
-          {unlocked ? (
-            <Heart size={15} fill="currentColor" />
-          ) : (
-            <Lock size={15} />
-          )}
+          <Info size={16} />
+          提示
         </button>
       </section>
 
@@ -207,7 +200,7 @@ export default function YaoyaoLetter() {
             <div className="letter-password">
               <p className="letter-password-title">只有你知道的暗号</p>
               <p className="letter-password-sub">
-                输入我的手机密码，就能拆开这封信
+                输入六位密码，就能拆开这封信
               </p>
               <div className={`pass-field ${error ? "is-error" : ""}`}>
                 <div className="pass-digits" role="group" aria-label="暗号六位">
@@ -243,6 +236,39 @@ export default function YaoyaoLetter() {
               >
                 <Heart size={16} fill="currentColor" /> 拆开这封信
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {hintOpen && (
+        <div className="letter-overlay" onClick={() => setHintOpen(false)}>
+          <div
+            className="letter-sheet letter-sheet--hint"
+            role="dialog"
+            aria-modal="true"
+            aria-label="密码提示"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <span className="letter-sheet-grip" aria-hidden="true" />
+            <header className="letter-head">
+              <span className="letter-eyebrow">
+                <Info size={15} /> 密码提示
+              </span>
+              <button
+                type="button"
+                className="letter-close"
+                onClick={() => setHintOpen(false)}
+                aria-label="关闭密码提示"
+              >
+                <X size={19} />
+              </button>
+            </header>
+            <div className="letter-password letter-hint">
+              <p className="letter-password-title">拆信提示</p>
+              <p className="letter-password-sub">
+                密码是我的手机锁屏密码，输入六位数字就能拆开这封信
+              </p>
             </div>
           </div>
         </div>
