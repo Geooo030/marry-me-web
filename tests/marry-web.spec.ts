@@ -107,14 +107,12 @@ test("首页展示瑶瑶的一封信封口卡片", async ({ page }) => {
   await expect(
     page.getByRole("button", { name: /瑶瑶的一封信/ }),
   ).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: /提示/ }),
-  ).toBeVisible();
   await expect(page.getByText("一封封口的信，输入暗号才能拆开")).toBeVisible();
 });
 
 test("点击提示按钮展示手机锁屏密码提示", async ({ page }) => {
   await page.goto("/");
+  await page.getByRole("button", { name: /瑶瑶的一封信/ }).click();
   await page.getByRole("button", { name: /提示/ }).click();
   await expect(page.getByRole("dialog", { name: "密码提示" })).toBeVisible();
   await expect(

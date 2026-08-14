@@ -26,9 +26,9 @@ export default function YaoyaoLetter() {
     if (!passwordOpen && !letterOpen && !hintOpen) return;
     const handleKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        if (letterOpen) setLetterOpen(false);
+        if (hintOpen) setHintOpen(false);
+        else if (letterOpen) setLetterOpen(false);
         else if (passwordOpen) setPasswordOpen(false);
-        else setHintOpen(false);
       }
     };
     const prevOverflow = document.body.style.overflow;
@@ -161,14 +161,6 @@ export default function YaoyaoLetter() {
             )}
           </span>
         </button>
-        <button
-          type="button"
-          className="letter-entry"
-          onClick={() => setHintOpen(true)}
-        >
-          <Info size={16} />
-          提示
-        </button>
       </section>
 
       {passwordOpen && (
@@ -187,6 +179,14 @@ export default function YaoyaoLetter() {
             <header className="letter-head">
               <span className="letter-eyebrow">
                 <Mail size={15} /> 拆信暗号
+                <button
+                  type="button"
+                  className="letter-hint-btn"
+                  onClick={() => setHintOpen(true)}
+                  aria-label="查看密码提示"
+                >
+                  <Info size={15} /> 提示
+                </button>
               </span>
               <button
                 type="button"
