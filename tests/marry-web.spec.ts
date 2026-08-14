@@ -101,3 +101,34 @@ test("减少动态效果时页面仍可正常使用", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "binke" })).toBeVisible();
   expect(await noHorizontalOverflow(page)).toBeLessThanOrEqual(0);
 });
+
+test("首页展示瑶瑶的一封信封口卡片", async ({ page }) => {
+  await page.goto("/");
+  await expect(
+    page.getByRole("button", { name: /瑶瑶的一封信/ }),
+  ).toBeVisible();
+  await expect(page.getByText("一封封口的信，输入暗号才能拆开")).toBeVisible();
+});
+
+test("输入错误暗号无法拆信", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: /瑶瑶的一封信/ }).click();
+  await page.getByLabel("暗号后四位").fill("0000");
+  await page.getByRole("button", { name: /拆开这封信/ }).click();
+  await expect(page.getByText("暗号不对，再试一次")).toBeVisible();
+  await expect(page.getByText("亲爱的瑶瑶：")).not.toBeVisible();
+});
+
+test("输入 1314 暗号后拆开信件", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: /瑶瑶的一封信/ }).click();
+  await page.getByLabel("暗号后四位").fill("1314");
+  await page.getByRole("button", { name: /拆开这封信/ }).click();
+  await expect(
+    page.getByRole("heading", { name: "瑶瑶的一封信" }),
+  ).toBeVisible();
+  await expect(page.getByText("Love at first sight")).toBeVisible();
+  await expect(page.getByText("他们都在陪我一起“表演”")).toBeVisible();
+  await expect(page.getByText("你的 班主任小王吧")).toBeVisible();
+  expect(await noHorizontalOverflow(page)).toBeLessThanOrEqual(0);
+});

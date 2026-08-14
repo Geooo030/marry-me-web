@@ -13,6 +13,7 @@ import { eventMeta } from "../data/timeline";
 import Confetti from "./Confetti";
 import Countdown from "./Countdown";
 import VenueModal from "./VenueModal";
+import YaoyaoLetter from "./YaoyaoLetter";
 
 const STORAGE_KEY = "marry-me-guest-id";
 
@@ -77,6 +78,7 @@ export default function HomePage() {
           <ChevronRight size={14} />
         </button>
         <Countdown />
+        <YaoyaoLetter />
       </section>
 
       <section className="section">
